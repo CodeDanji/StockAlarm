@@ -12,3 +12,5 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     plan_tier: Mapped[str] = mapped_column(String(20), default="free")
     timezone: Mapped[str] = mapped_column(String(64), default="Asia/Seoul")
+    quiet_hours_start: Mapped[str] = mapped_column(String(5), default="23:00")
+    quiet_hours_end: Mapped[str] = mapped_column(String(5), default="07:00")
