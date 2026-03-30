@@ -5,6 +5,7 @@ from app.models.base import Base
 from app.routers.alerts import router as alerts_router
 from app.routers.auth import router as auth_router
 from app.routers.me import router as me_router
+from app.routers.strategies import router as strategies_router
 
 # Import models so SQLAlchemy registers the table metadata before create_all().
 import app.models.alert_rule  # noqa: F401
@@ -29,3 +30,4 @@ def health() -> dict[str, str]:
 app.include_router(auth_router)
 app.include_router(me_router)
 app.include_router(alerts_router)
+app.include_router(strategies_router)
