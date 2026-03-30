@@ -4,6 +4,8 @@ from app.db.session import engine
 from app.models.base import Base
 from app.routers.alerts import router as alerts_router
 from app.routers.auth import router as auth_router
+from app.routers.billing import router as billing_router
+from app.routers.devices import router as devices_router
 from app.routers.me import router as me_router
 from app.routers.strategies import router as strategies_router
 
@@ -31,3 +33,5 @@ app.include_router(auth_router)
 app.include_router(me_router)
 app.include_router(alerts_router)
 app.include_router(strategies_router)
+app.include_router(devices_router)
+app.include_router(billing_router)
