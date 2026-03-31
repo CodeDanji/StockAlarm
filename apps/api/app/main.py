@@ -16,6 +16,7 @@ from app.routers.strategies import router as strategies_router
 # Import models so SQLAlchemy registers the table metadata before create_all().
 import app.models.alert_rule  # noqa: F401
 import app.models.device  # noqa: F401
+import app.models.market_snapshot  # noqa: F401
 import app.models.rule_state  # noqa: F401
 import app.models.usage_counter  # noqa: F401
 import app.models.user  # noqa: F401
