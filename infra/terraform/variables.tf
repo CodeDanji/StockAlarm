@@ -29,11 +29,34 @@ variable "scheduler_time_zone" {
 
 variable "dispatcher_push_endpoint_base" {
   type    = string
-  default = "https://example.com"
+  default = ""
 }
 
 variable "dispatcher_internal_token" {
   type      = string
   sensitive = true
   default   = "change-me"
+}
+
+variable "database_url" {
+  type      = string
+  sensitive = true
+  default   = "sqlite+pysqlite:///./ecoalarm.db"
+}
+
+variable "eodhd_api_key" {
+  type      = string
+  sensitive = true
+  default   = ""
+}
+
+variable "google_client_ids" {
+  type    = string
+  default = ""
+}
+
+variable "jwt_secret" {
+  type      = string
+  sensitive = true
+  default   = "dev-secret-change-in-prod"
 }

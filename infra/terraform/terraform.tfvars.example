@@ -1,0 +1,14 @@
+project_id               = "your-gcp-project-id"
+region                   = "asia-northeast3"
+api_image                = "asia-northeast3-docker.pkg.dev/your-gcp-project-id/ecoalarm/api:latest"
+worker_image             = "asia-northeast3-docker.pkg.dev/your-gcp-project-id/ecoalarm/worker:latest"
+dispatcher_internal_token = "replace-with-random-token"
+
+# Optional. Leave empty to use Cloud Run API service URI automatically.
+dispatcher_push_endpoint_base = ""
+
+# Runtime app values
+database_url     = "postgresql+psycopg://<user>:<password>@<host>:5432/<db>"
+eodhd_api_key    = "replace-with-eodhd-key"
+google_client_ids = "google-client-id.apps.googleusercontent.com"
+jwt_secret       = "replace-with-long-random-secret"

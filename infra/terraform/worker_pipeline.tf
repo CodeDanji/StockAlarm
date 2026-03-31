@@ -5,7 +5,10 @@ data "google_project" "current" {
 locals {
   cloud_scheduler_service_account = "service-${data.google_project.current.number}@gcp-sa-cloudscheduler.iam.gserviceaccount.com"
   cloud_pubsub_service_account    = "service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
-  dispatcher_endpoint_base        = trimsuffix(var.dispatcher_push_endpoint_base, "/")
+  dispatcher_endpoint_base = length(trimspace(var.dispatcher_push_endpoint_base)) > 0 ? trimsuffix(
+    var.dispatcher_push_endpoint_base,
+    "/",
+  ) : trimsuffix(google_cloud_run_v2_service.api.uri, "/")
 }
 
 resource "google_pubsub_topic" "ingestion" {
@@ -44,8 +47,32 @@ resource "google_cloud_run_v2_job" "ingestor" {
 
   template {
     template {
+      service_account = google_service_account.worker_runtime.email
+
       containers {
         image = var.worker_image
+        command = ["python"]
+        args    = ["-m", "app.workers.runner", "--worker", "ingestor"]
+
+        env {
+          name  = "DATABASE_URL"
+          value = var.database_url
+        }
+
+        env {
+          name  = "EODHD_API_KEY"
+          value = var.eodhd_api_key
+        }
+
+        env {
+          name  = "GCP_PROJECT_ID"
+          value = var.project_id
+        }
+
+        env {
+          name  = "GCP_REGION"
+          value = var.region
+        }
       }
       max_retries = 1
       timeout     = "600s"
@@ -60,8 +87,32 @@ resource "google_cloud_run_v2_job" "evaluator" {
 
   template {
     template {
+      service_account = google_service_account.worker_runtime.email
+
       containers {
         image = var.worker_image
+        command = ["python"]
+        args    = ["-m", "app.workers.runner", "--worker", "evaluator"]
+
+        env {
+          name  = "DATABASE_URL"
+          value = var.database_url
+        }
+
+        env {
+          name  = "EODHD_API_KEY"
+          value = var.eodhd_api_key
+        }
+
+        env {
+          name  = "GCP_PROJECT_ID"
+          value = var.project_id
+        }
+
+        env {
+          name  = "GCP_REGION"
+          value = var.region
+        }
       }
       max_retries = 1
       timeout     = "600s"
@@ -76,8 +127,27 @@ resource "google_cloud_run_v2_job" "digest" {
 
   template {
     template {
+      service_account = google_service_account.worker_runtime.email
+
       containers {
         image = var.worker_image
+        command = ["python"]
+        args    = ["-m", "app.workers.runner", "--worker", "digest"]
+
+        env {
+          name  = "DATABASE_URL"
+          value = var.database_url
+        }
+
+        env {
+          name  = "GCP_PROJECT_ID"
+          value = var.project_id
+        }
+
+        env {
+          name  = "GCP_REGION"
+          value = var.region
+        }
       }
       max_retries = 1
       timeout     = "600s"
