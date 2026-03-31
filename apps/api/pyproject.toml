@@ -8,6 +8,7 @@ dependencies = [
     "pydantic>=2.8.0",
     "sqlalchemy>=2.0.0",
     "pyjwt>=2.9.0",
+    "google-auth>=2.35.0",
 ]
 
 [project.optional-dependencies]

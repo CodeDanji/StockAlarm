@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
 from app.db.session import engine
@@ -16,12 +20,13 @@ import app.models.rule_state  # noqa: F401
 import app.models.usage_counter  # noqa: F401
 import app.models.user  # noqa: F401
 
-app = FastAPI(title="EcoAlarm API", version="0.1.0")
-
-
-@app.on_event("startup")
-def create_database_schema() -> None:
+@asynccontextmanager
+async def lifespan(_: FastAPI):
     Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="EcoAlarm API", version="0.1.0", lifespan=lifespan)
 
 
 @app.get("/health")

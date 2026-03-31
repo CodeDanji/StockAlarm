@@ -7,7 +7,7 @@
 
 ## Environment
 1. Copy `.env.example` to `.env`.
-2. Fill API keys and local database connection.
+2. Fill API keys, `GOOGLE_CLIENT_ID`, and local database connection.
 3. Never commit `.env`.
 
 ## Local Run
