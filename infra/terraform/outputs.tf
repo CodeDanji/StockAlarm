@@ -17,3 +17,11 @@ output "pubsub_topic_names" {
     digest     = google_pubsub_topic.digest.name
   }
 }
+
+output "pubsub_subscription_names" {
+  value = {
+    ingestion  = google_pubsub_subscription.ingestion_dispatch.name
+    evaluation = google_pubsub_subscription.evaluation_dispatch.name
+    digest     = google_pubsub_subscription.digest_dispatch.name
+  }
+}

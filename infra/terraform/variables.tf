@@ -26,3 +26,14 @@ variable "scheduler_time_zone" {
   type    = string
   default = "Asia/Seoul"
 }
+
+variable "dispatcher_push_endpoint_base" {
+  type    = string
+  default = "https://example.com"
+}
+
+variable "dispatcher_internal_token" {
+  type      = string
+  sensitive = true
+  default   = "change-me"
+}

@@ -4,6 +4,8 @@ data "google_project" "current" {
 
 locals {
   cloud_scheduler_service_account = "service-${data.google_project.current.number}@gcp-sa-cloudscheduler.iam.gserviceaccount.com"
+  cloud_pubsub_service_account    = "service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+  dispatcher_endpoint_base        = trimsuffix(var.dispatcher_push_endpoint_base, "/")
 }
 
 resource "google_pubsub_topic" "ingestion" {
@@ -81,6 +83,66 @@ resource "google_cloud_run_v2_job" "digest" {
       timeout     = "600s"
     }
     task_count = 1
+  }
+}
+
+resource "google_service_account" "pubsub_push_dispatcher" {
+  account_id   = "ecoalarm-pubsub-push"
+  display_name = "EcoAlarm PubSub Push Dispatcher"
+}
+
+resource "google_service_account_iam_member" "pubsub_can_sign_oidc" {
+  service_account_id = google_service_account.pubsub_push_dispatcher.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "serviceAccount:${local.cloud_pubsub_service_account}"
+}
+
+resource "google_cloud_run_v2_service_iam_member" "pubsub_push_invoker" {
+  location = var.region
+  name     = google_cloud_run_v2_service.api.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_service_account.pubsub_push_dispatcher.email}"
+}
+
+resource "google_pubsub_subscription" "ingestion_dispatch" {
+  name  = "market-ingestion-dispatch"
+  topic = google_pubsub_topic.ingestion.id
+
+  push_config {
+    push_endpoint = "${local.dispatcher_endpoint_base}/internal/dispatch/ingestor?token=${urlencode(var.dispatcher_internal_token)}"
+
+    oidc_token {
+      service_account_email = google_service_account.pubsub_push_dispatcher.email
+      audience              = local.dispatcher_endpoint_base
+    }
+  }
+}
+
+resource "google_pubsub_subscription" "evaluation_dispatch" {
+  name  = "rule-evaluation-dispatch"
+  topic = google_pubsub_topic.evaluation.id
+
+  push_config {
+    push_endpoint = "${local.dispatcher_endpoint_base}/internal/dispatch/evaluator?token=${urlencode(var.dispatcher_internal_token)}"
+
+    oidc_token {
+      service_account_email = google_service_account.pubsub_push_dispatcher.email
+      audience              = local.dispatcher_endpoint_base
+    }
+  }
+}
+
+resource "google_pubsub_subscription" "digest_dispatch" {
+  name  = "morning-digest-dispatch"
+  topic = google_pubsub_topic.digest.id
+
+  push_config {
+    push_endpoint = "${local.dispatcher_endpoint_base}/internal/dispatch/digest?token=${urlencode(var.dispatcher_internal_token)}"
+
+    oidc_token {
+      service_account_email = google_service_account.pubsub_push_dispatcher.email
+      audience              = local.dispatcher_endpoint_base
+    }
   }
 }
 

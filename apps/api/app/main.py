@@ -10,6 +10,7 @@ from app.routers.alerts import router as alerts_router
 from app.routers.auth import router as auth_router
 from app.routers.billing import router as billing_router
 from app.routers.devices import router as devices_router
+from app.routers.internal_dispatch import router as internal_dispatch_router
 from app.routers.me import router as me_router
 from app.routers.strategies import router as strategies_router
 
@@ -41,3 +42,4 @@ app.include_router(alerts_router)
 app.include_router(strategies_router)
 app.include_router(devices_router)
 app.include_router(billing_router)
+app.include_router(internal_dispatch_router)

@@ -9,6 +9,7 @@
 1. Copy `.env.example` to `.env`.
 2. Fill API keys, `GOOGLE_CLIENT_ID`, and local database connection.
 3. Never commit `.env`.
+4. Set `INTERNAL_DISPATCH_TOKEN` and worker job names for internal dispatch.
 
 ## Local Run
 - API: `cd apps/api && uvicorn app.main:app --reload`
@@ -18,3 +19,6 @@
 - Backend tests: `cd apps/api && python -m pytest -v`
 - Frontend tests: `cd apps/web && npm run test:ci -- alert-list.test.tsx`
 - Terraform validation: `cd infra/terraform && terraform init && terraform validate`
+- Worker pipeline apply requires setting Terraform vars:
+  - `dispatcher_push_endpoint_base` (Cloud Run API URL, e.g. `https://<api-url>`)
+  - `dispatcher_internal_token` (same as app `INTERNAL_DISPATCH_TOKEN`)
