@@ -4,7 +4,7 @@ resource "google_cloud_run_v2_service" "api" {
 
   template {
     containers {
-      image = "us-docker.pkg.dev/cloudrun/container/hello"
+      image = var.api_image
     }
   }
 }
